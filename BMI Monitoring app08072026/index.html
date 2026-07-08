@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BMI Monitoring App of Odisha Sector</title>
+
+  <link rel="stylesheet" href="style.css">
+  <link rel="manifest" href="manifest.json">
+
+  <!-- ✅ SPEED FIX: these were plain (blocking) <script> tags sitting in
+       <head> with no defer/async, so the browser had to stop parsing
+       the rest of the page and wait for both files to download from
+       the CDN before it could even build the DOM. Adding "defer" lets
+       the HTML parse (and the rest of the page render) immediately,
+       while these still load and run, in order, before app.js runs. -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" defer></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels" defer></script>
+<style>
+:root {
+  --scale: 1.2;
+}
+
+body {
+  font-size: calc(16px * var(--scale));
+}
+</style>
+</head>
+<body>
+
+<div id="welcomeBanner">
+  <div class="welcome-content">
+    <h1>WELCOME 💐 to Odisha Sector BMI Monitoring App</h1>
+  <p id="typingText"></p>
+            
+  </div>
+</div>
+<!-- HEADER -->
+
+<!-- MESSAGE MODAL -->
+<div id="messageModal" class="message-modal">
+
+  <div class="message-card">
+
+    <div id="messageIcon">✅</div>
+
+    <h1 id="messageTitle">Success</h1>
+
+    <p id="messageText"></p>
+
+    <button onclick="closeMessageModal()">
+      OK
+    </button>
+
+  </div>
+
+</div>
+
+<!-- HEADER -->
+
+<!-- HEADER -->
+
+<div class="app-header">
+
+    <div class="header-left">
+
+        <img src="icons/icon.jpg" class="header-icon">
+
+        <img
+            src="icons/gym.png"
+            class="header-icon"
+        >
+
+        <!-- YOGA ICON -->
+        <img
+            src="icons/yoga.png"
+            class="header-icon yoga-click"
+            onclick="openYogaApp()"
+        >
+
+    </div>
+
+
+    <h1 class="app-title">BMI Monitoring APP</h1>
+
+
+    <div class="header-right">
+
+       <img
+  src="icons/running.png"
+  class="header-icon clickable-runner"
+  onclick="openRunApp()"
+/>
+
+        <img src="icons/icon.png" class="header-icon">
+
+    </div>
+
+</div>
+
+
+<!-- SECTION 1 -->
+<div id="top" class="grid3">
+
+  <!-- ROW 1 -->
+  <button onclick="selectUnit('IG OFFICE', this)">
+    IG Office
+  </button>
+
+  <button onclick="selectUnit('RANGESBP', this)">
+    Range SBP
+  </button>
+
+  <!-- RANGE SBP UNITS -->
+<div class="dropdown-unit">
+
+  <button class="dropdown-main">
+    <span id="sbpSelected">Range SBP Units ▼</span>
+  </button>
+
+  <div class="dropdown-content">
+
+    <button onclick="selectDropdownUnit('4 BN','sbpSelected', this)">
+      4 BN
+    </button>
+
+    <button onclick="selectDropdownUnit('8 BN','sbpSelected', this)">
+      8 BN
+    </button>
+
+    <button onclick="selectDropdownUnit('12 BN','sbpSelected', this)">
+      12 BN
+    </button>
+
+    <button onclick="selectDropdownUnit('64 BN','sbpSelected', this)">
+      64 BN
+    </button>
+
+    <button onclick="selectDropdownUnit('127 BN','sbpSelected', this)">
+      127 BN
+    </button>
+
+    <!--<button onclick="selectDropdownUnit('RANGE_SBP_ALL','sbpSelected', this)">
+      Range SBP + Units
+    </button>-->
+
+  </div>
+
+</div>
+
+
+  <!-- ROW 2 -->
+  <button onclick="selectUnit('GC SBP', this)">
+    GC SBP
+  </button>
+
+  <button onclick="selectUnit('RANGEBBSR', this)">
+    Range BBSR
+  </button>
+
+
+  <!-- RANGE BBSR UNITS -->
+<div class="dropdown-unit">
+
+  <button class="dropdown-main">
+    <span id="bbsrSelected">Range BBSR Units ▼</span>
+  </button>
+
+  <div class="dropdown-content">
+
+    <button onclick="selectDropdownUnit('19 BN','bbsrSelected', this)">
+      19 BN
+    </button>
+
+    <button onclick="selectDropdownUnit('168 BN','bbsrSelected', this)">
+      168 BN
+    </button>
+
+    <button onclick="selectDropdownUnit('189 BN','bbsrSelected', this)">
+      189 BN
+    </button>
+
+    <button onclick="selectDropdownUnit('216 BN','bbsrSelected', this)">
+      216 BN
+    </button>
+
+    <button onclick="selectDropdownUnit('228 BN','bbsrSelected', this)">
+      228 BN
+    </button>
+
+    <!--<button onclick="selectDropdownUnit('RANGE_BBSR+UNITS','bbsrSelected', this)">
+      Range BBSR + Units
+    </button>-->
+
+  </div>
+
+</div>
+
+  <!-- ROW 3 -->
+  <button onclick="selectUnit('GC BBSR', this)">
+    GC BBSR
+  </button>
+
+  <button onclick="selectUnit('CH BBSR', this)">
+    CH BBSR
+  </button>
+
+  <button
+  data-unit="ODISHASECTOR"
+  onclick="selectUnit('ODISHASECTOR', this)"
+  title="Entire Odisha Sector"
+>
+  Odisha Sector
+</button>
+
+</div>
+
+
+<hr class="rainbow thick">
+
+<!-- SECTION 2 -->
+<div id="middle" class="section2-container">
+
+  <div class="section2-left">
+    <button class="under-btn" onclick="handleCategory('under', this)">Underweight<br>(<18.5)</button>
+    <button class="normal-btn" onclick="handleCategory('normal', this)">Normal<br>(18.5–24.9)</button>
+    <button class="over-btn" onclick="handleCategory('over', this)">Overweight<br>(25–29.9)</button>
+    <button class="obese-btn" onclick="handleCategory('obese', this)">Obese<br>(≥30)</button>
+  </div>
+
+  <div class="vertical-rainbow"></div>
+
+  <div class="section2-right">
+    <!-- CLICKABLE -->
+    <div class="leaderboard-card" onclick="openLeaderboardModal()">
+      <h2 id="bestTitle">🏆 Weekly Performers</h2>
+
+      <div><b>Weight Loss:</b> <span id="bestWeight">-</span></div>
+      <div><b>Steps:</b> <span id="bestSteps">-</span></div>
+      <div><b>Distance:</b> <span id="bestDistance">-</span></div>
+      <div><b>Calories:</b> <span id="bestCalories">-</span></div>
+    </div>
+  </div>
+
+</div>
+
+<hr class="rainbow thick">
+
+<div class="chart-summary">
+
+    <div class="chart-box">
+
+        <!-- PA BUTTON -->
+        <button
+    id="paMiniBtn"
+    class="pa-mini-btn"
+    onclick="togglePAButton(event)"
+    title="Open PA Table">
+    PA
+</button>
+
+        <canvas id="chart"></canvas>
+
+    </div>
+
+    <div class="divider"></div>
+
+    <div
+        class="summary-box"
+        id="summary">
+    </div>
+
+</div>
+  
+
+<!-- SECTION 3 -->
+
+<div id="output" style="display:none;">
+
+  <div id="floatingSearch">
+    <input type="text" id="searchInput" placeholder="🔍 Search Force No..." />
+    <button onclick="searchByForceNumber()">Enter</button>
+  </div>
+
+  <table id="dataTable"></table>
+
+</div>
+
+<div id="myStatusContainer" style="text-align:center; margin:15px 0;">
+  <button id="myStatusBtn" style="display:none;" onclick="openMyStatusModal(this)">
+    My Status
+  </button>
+</div>
+
+
+<hr class="rainbow thick">
+
+<!-- SECTION 4 -->
+
+
+<div class="section section4" id="chartsSection">
+  <div class="grid-2x2">
+
+    <div class="chart-card weight-card">
+      <div class="chart-title">Weekly Average Weight(Kg)</div>
+      <canvas id="weightChart"></canvas>
+    </div>
+
+    <div class="chart-card calories-card">
+      <div class="chart-title">Weekly Average Calories</div>
+      <canvas id="caloriesChart"></canvas>
+    </div>
+
+    <div class="chart-card steps-card">
+      <div class="chart-title">Weekly Average Steps Count</div>
+      <canvas id="stepsChart"></canvas>
+    </div>
+
+    <div class="chart-card distance-card">
+      <div class="chart-title">Weekly Average Distance(KM)</div>
+      <canvas id="distanceChart"></canvas>
+    </div>
+
+  </div>
+</div>
+
+<div id="chartModal">
+
+  <div id="chartContainer">
+
+    <span id="closeModal">&times;</span>
+
+    <canvas id="modalChart"></canvas>
+
+  </div>
+
+</div>
+
+<!-- ✅ LEADERBOARD MODAL -->
+<div id="leaderModal" class="leader-modal">
+  <div class="leader-modal-content">
+    <span id="closeLeader">&times;</span>
+    
+<h3 id="leaderWeek" class="leader-week"></h3>
+<div class="pdf-container">
+  <button class="pdf-btn" onclick="downloadLeaderboardPDF()">
+    📄 Download PDF
+  </button>
+</div>
+      <div id="leaderTable"></div>
+  </div>
+</div>
+
+<!-- INSTALL -->
+<div id="installBanner" class="install-banner">
+
+  <!-- LEFT LOGO -->
+  <img
+    src="icons/icon-512.png"
+    class="install-logo"
+  />
+
+  <!-- CENTER TITLE -->
+  <div class="install-title">
+    BMI Monitoring App
+  </div>
+
+  <!-- INSTALL BUTTON -->
+  <button id="installBtn">
+    Install
+  </button>
+
+</div>
+
+<div class="app-footer">
+  Developed by Range Sambalpur and 4 BN CRPF</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script src="app.js"></script>
+
+
+<!-- ================= MY STATUS MODAL ================= -->
+<div id="myStatusModal" class="my-modal">
+
+  <div class="my-modal-content">
+
+    <!-- ✅ CLOSE BUTTON (SAFE - NEVER REMOVED) -->
+    <span class="close-btn red-close" onclick="closeMyStatusModal()">✖</span>
+
+    <!-- ✅ CONTENT AREA (JS WILL FILL THIS ONLY) -->
+    <div id="myStatusBody"></div>
+
+  </div>
+
+</div>
+
+<script>
+
+function openYogaApp(){
+
+  window.location.href =
+    "https://crpfvairavyoga.netlify.app/";
+
+}
+
+</script>
+
+<!-- =========================================
+                PA MODAL
+========================================= -->
+
+<div id="paModal" class="pa-modal">
+
+<div class="pa-box">
+
+<div class="pa-header">
+
+<h2>
+
+PA TABLE
+(Punish or Appreciate)
+
+</h2>
+
+<div class="pa-header-actions">
+
+<button
+id="paHeaderShareBtn"
+class="pa-header-share-btn"
+title="Share PA report as PDF"
+onclick="sharePAModalReport()">
+
+<img
+src="icons/share.png"
+alt="Share"
+class="pa-header-share-icon">
+
+</button>
+
+<button
+id="closePAModal"
+onclick="closePAModal()">
+
+✕
+
+</button>
+
+</div>
+
+</div>
+
+<div class="pa-mode">
+
+<label class="pa-radio">
+<input
+id="paWeekRadio"
+type="radio"
+name="paMode"
+value="current"
+checked
+onclick="showPAWeek()">
+
+<span>Cur.Week</span>
+
+</label>
+
+<label class="pa-radio">
+
+<input
+id="paMonthRadio"
+type="radio"
+name="paMode"
+value="month"
+onclick="showPAMonth()">
+
+<span>Curr.Month</span>
+
+</label>
+
+</div>
+
+<div class="pa-legend">
+
+<b>UW</b> = Underweight &nbsp; |
+&nbsp;<b>N</b> = Normal &nbsp; |
+&nbsp;<b>OW</b> = Overweight &nbsp; |
+&nbsp;<b>OB</b> = Obese
+
+</div>
+
+<div id="paTableContainer"></div>
+
+</div>
+
+</div>
+
+</body>
+</html>
